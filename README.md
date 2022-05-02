@@ -1,6 +1,6 @@
-# chatServer
+# chatService
 
-a brodcast chat server, based on muduo net library writen by ChenShuo: http://github.com/chenshuo/muduo
+a brodcast chat server/client service, based on muduo net library writen by ChenShuo: http://github.com/chenshuo/muduo
 
 # 协议
 
