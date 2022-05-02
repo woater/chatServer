@@ -2,17 +2,17 @@ CXXFLAGS+=-Wall -Wextra -g
 LDFLAGS+=-lmuduo_net -lmuduo_base -pthread 
 CC = g++
 
-target:server
+target:client
 
-server:server_main.o server.o
-	${CC} ${CXXFLAGS} -o server server_main.o server.o ${LDFLAGS}
+client:client_main.o client.o
+	${CC} ${CXXFLAGS} -o client client_main.o client.o ${LDFLAGS}
 
-server_main.o:server_main.cpp
+client_main.o:client_main.cpp
 	${CC} ${CXXFLAGS} -c -o $@ $? ${LDFLAGS}
 
-server.o:server.cpp
+client.o:client.cpp
 	${CC} ${CXXFLAGS} -c -o $@ $? ${LDFLAGS}
 
 .phony:
 clean:
-	rm -rf ./*.o server
+	rm -rf ./*.o client
