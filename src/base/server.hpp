@@ -9,16 +9,16 @@
 
 class ChatServer {
 public:
-    // constructor
+    // 构造函数
     ChatServer(muduo::net::EventLoop* loop,
             const muduo::net::InetAddress& listenAddr);
-    // no-copyable
+    // 不可复制、拷贝
     ChatServer(const ChatServer&) = delete;
     ChatServer(const ChatServer&&) = delete;
     ChatServer& operator=(const ChatServer&) = delete;
     ChatServer& operator=(const ChatServer&&) = delete;
 
-    // bahavior on new connection
+    // 处理连接（新连接或断开）
     void onConnection(const muduo::net::TcpConnectionPtr& connection);
     // bahavior on new message
     void onMessage(const muduo::net::TcpConnectionPtr& connection,
