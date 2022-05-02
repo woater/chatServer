@@ -5,6 +5,7 @@
 #include "muduo/base/Logging.h"
 #include <muduo/net/Callbacks.h>
 #include <mutex>
+#include "../lengthCodec/lengthCodec.hpp"
 
 class ChatClient {
 public:
@@ -16,12 +17,13 @@ public:
     ChatClient& operator=(const ChatClient&&) = delete;
 
     void onConnection(const muduo::net::TcpConnectionPtr& connection);
-    void onMessage(const muduo::net::TcpConnectionPtr& connection, muduo::net::Buffer* buffer, muduo::Timestamp time);
+    void onStringMessage(const muduo::net::TcpConnectionPtr& connection, const std::string& message, muduo::Timestamp time);
     void write(std::string& message);
     void connect();
     void disconnect();
 private:
     muduo::net::TcpClient client_;
+    LengthCodec codec_;
     std::mutex mutex_;
     muduo::net::TcpConnectionPtr connection_;
 };
