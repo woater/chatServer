@@ -1,5 +1,5 @@
-#ifndef CHATSERVER_BASE_SERVER_HPP__
-#define CHATSERVER_BASE_SERVER_HPP__
+#ifndef CHATSERVER_MULTI_THREAD_SERVER_HPP__
+#define CHATSERVER_MULTI_THREAD_SERVER_HPP__
 
 #include "muduo/net/TcpServer.h"
 #include "muduo/base/Logging.h"

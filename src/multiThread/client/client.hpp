@@ -1,5 +1,5 @@
-#ifndef CHATSERVER_BASE_CLIENT_HPP__
-#define CHATSERVER_BASE_CLIENT_HPP__
+#ifndef CHATSERVER_BASIC_STICKY_HALF_PACKAGE_CLIENT_HPP__
+#define CHATSERVER_BASIC_STICKY_HALF_PACKAGE_CLIENT_HPP__
 
 #include "muduo/net/TcpClient.h"
 #include "muduo/base/Logging.h"

@@ -16,10 +16,10 @@ a brodcast chat server/client service, based on muduo net library writen by Chen
 
 # 实现版本
 
-- 不处理分包和粘包问题，使用最简单的echo服务器变体作为实现：base/server.hpp, base/server.cpp
-- 引入头部长度信息，处理分包和粘包问题
-- 使用多线程
-- 使用线程池
+- 不处理分包和粘包问题，使用最简单的echo服务器变体作为实现：base
+- 引入头部长度信息，处理分包和粘包问题  base_sticky_half_package
+- 使用线程池    multiThread
+- 负载测试      loadTest
 
 
 
