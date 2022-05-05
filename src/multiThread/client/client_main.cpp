@@ -25,10 +25,8 @@ int main(int argc, char* argv[]) {
     // 读命令行输入，发到服务器
     std::string line;
     while (std::getline(std::cin, line)) {
-    // while (std::cin >> line) {
         // line += line;
         // std::cout << "send: " << line.size() << std::endl;
-        // 由于命令行缓冲区的限制，从命令行输入，一次最多发送4095bytes的消息
         client.write(line);
     }
 

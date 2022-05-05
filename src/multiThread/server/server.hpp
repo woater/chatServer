@@ -4,6 +4,8 @@
 #include "muduo/net/TcpServer.h"
 #include "muduo/base/Logging.h"
 #include <muduo/net/Callbacks.h>
+#include "../lengthCodec/lengthCodec.hpp"
+#include <mutex>
 
 #include <set>
 
@@ -21,15 +23,19 @@ public:
     // 处理连接（新连接或断开）
     void onConnection(const muduo::net::TcpConnectionPtr& connection);
     // bahavior on new message
-    void onMessage(const muduo::net::TcpConnectionPtr& connection,
-            muduo::net::Buffer* buffer,
-            muduo::Timestamp time);
+    void onStringMessage(const muduo::net::TcpConnectionPtr& connection,
+                        const std::string& msg,
+                        muduo::Timestamp time);
     
+    void setThreadNum(int numThreads);
     void start();
+
 private:
     typedef std::set<muduo::net::TcpConnectionPtr> ConnectionSet;
-
+    
+    std::mutex mutexOfConnections_;
     muduo::net::TcpServer server_;
+    LengthCodec codec_;
     ConnectionSet connections_;
 };
 
