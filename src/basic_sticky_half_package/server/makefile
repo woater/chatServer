@@ -1,4 +1,4 @@
-CXXFLAGS+=-Wall -Wextra -g
+CXXFLAGS+=-Wall -Wextra -O2 # -g
 LDFLAGS+=-lmuduo_net -lmuduo_base -pthread 
 CC = g++
 

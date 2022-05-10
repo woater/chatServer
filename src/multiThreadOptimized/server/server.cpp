@@ -5,6 +5,7 @@
 #include <muduo/net/TcpConnection.h>
 #include <functional>
 #include <mutex>
+#include <muduo/net/EventLoop.h>
 
 using std::placeholders::_1;
 using std::placeholders::_2;
@@ -14,8 +15,7 @@ using std::placeholders::_3;
 ChatServer::ChatServer(muduo::net::EventLoop* loop,
     const muduo::net::InetAddress& listenAddr)
 : server_(loop, listenAddr, "ChatServer"), 
-codec_(std::bind(&ChatServer::onStringMessage, this, _1, _2, _3)),
-connections_(new ConnectionSet) {
+codec_(std::bind(&ChatServer::onStringMessage, this, _1, _2, _3)){
     server_.setConnectionCallback(std::bind(&ChatServer::onConnection, this, _1));
     server_.setMessageCallback(std::bind(&LengthCodec::onMessage, &codec_, _1, _2, _3));
 }
@@ -27,17 +27,10 @@ void ChatServer::onConnection(const muduo::net::TcpConnectionPtr& connection) {
             << " -> " << connection->localAddress().toIpPort() << " is "
             << (connection->connected() ? "UP" : "DOWN");
 
-    {
-    std::lock_guard<std::mutex> lock(mutexOfConnections_);
-        if (! connections_.unique()) {
-            connections_.reset(new ConnectionSet(*connections_));
-        }
-
-        if (connection->connected()) {
-            connections_->insert(connection);
-        } else {
-            connections_->erase(connection);
-        }
+    if (connection->connected()) {
+        localConnections_::instance().insert(connection);
+    } else {
+        localConnections_::instance().erase(connection);
     }
     
 }
@@ -47,17 +40,14 @@ void ChatServer::onConnection(const muduo::net::TcpConnectionPtr& connection) {
 void ChatServer::onStringMessage(const muduo::net::TcpConnectionPtr& connection, const std::string& msg, muduo::Timestamp time) {
     LOG_INFO << "ChatServer - " << "recieved " << " from " << connection->peerAddress().toIpPort()
             << " at " << time.toString() << " "<< msg.size() << " bytes data " ;
-    {
-        ConnectionSetPtr connections = getConnectionSet();
-        for (auto conn : *connections) {
-            codec_.send(conn, msg);
-        }
-    } 
-}
+    auto func = std::bind(&ChatServer::distributeMessage, this, msg);
 
-ChatServer::ConnectionSetPtr ChatServer::getConnectionSet() {
-    std::lock_guard<std::mutex> lock(mutexOfConnections_);
-    return connections_;
+    {
+        std::lock_guard<std::mutex> lock(mutOfLoops_);
+        for (auto iter : loops_) {
+            iter->queueInLoop(func);
+        }
+    }
 }
 
 void ChatServer::setThreadNum(int numThreads) {
@@ -65,5 +55,17 @@ void ChatServer::setThreadNum(int numThreads) {
 }
 
 void ChatServer::start() {
+    server_.setThreadInitCallback(std::bind(&ChatServer::threadInit, this, _1));
     server_.start();
+}
+
+void ChatServer::distributeMessage(const std::string& message) {
+    for (auto iter : localConnections_::instance()) {
+        codec_.send(iter, message);
+    }
+}
+void ChatServer::threadInit(muduo::net::EventLoop* loop) {
+    localConnections_::instance();
+    std::lock_guard<std::mutex> lock(mutOfLoops_);
+    loops_.insert(loop);
 }

@@ -18,7 +18,7 @@ public:
     LengthCodec& operator=(const LengthCodec&&) = delete;
 
     void onMessage(const muduo::net::TcpConnectionPtr& connection, muduo::net::Buffer* buffer, const muduo::Timestamp& time);
-    void send(const muduo::net::TcpConnectionPtr& connection, const std::string& message);
+    void send(const muduo::net::TcpConnectionPtr& connection, const std::string message); // pass message by value for thread-safety
 private:
     StringMessageCallback messageCallback_;
     const static size_t lengthHeaderLen = sizeof(int32_t);

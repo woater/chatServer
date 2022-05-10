@@ -1,4 +1,4 @@
-CXXFLAGS+=-Wall -Wextra -g
+CXXFLAGS+=-Wall -Wextra -O2 # -g
 LDFLAGS+=-lmuduo_net -lmuduo_base -pthread 
 CC = g++
 
@@ -13,7 +13,7 @@ server_main.o:server_main.cpp
 server.o:server.cpp
 	${CC} ${CXXFLAGS} -c -o $@ $? ${LDFLAGS}
 
-lengthCodec.o:lengthCodec.cpp
+lengthCodec.o:../lengthCodec/lengthCodec.cpp
 	${CC} ${CXXFLAGS} -c -o $@ $? ${LDFLAGS}
 
 .phony:

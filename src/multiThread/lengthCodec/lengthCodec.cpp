@@ -27,7 +27,7 @@ void LengthCodec::onMessage(const muduo::net::TcpConnectionPtr& connection, mudu
     }
 }
 
-void LengthCodec::send(const muduo::net::TcpConnectionPtr& connection, const std::string& message) {
+void LengthCodec::send(const muduo::net::TcpConnectionPtr& connection, const std::string message) {
     muduo::net::Buffer buffer;
     buffer.append(message.data(), message.size());
     

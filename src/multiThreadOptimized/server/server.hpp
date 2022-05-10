@@ -6,6 +6,8 @@
 #include <memory>
 #include <muduo/net/Callbacks.h>
 #include "../lengthCodec/lengthCodec.hpp"
+#include <muduo/net/TcpConnection.h>
+#include <muduo/base/ThreadLocalSingleton.h>
 #include <mutex>
 
 #include <set>
@@ -30,17 +32,21 @@ public:
 
     void setThreadNum(int numThreads);
     void start();
+    void distributeMessage(const std::string& message);
+    void threadInit(muduo::net::EventLoop* loop);
 
 private:
     typedef std::set<muduo::net::TcpConnectionPtr> ConnectionSet;
     typedef std::shared_ptr<ConnectionSet> ConnectionSetPtr;
+
+    // static thread_local ConnectionSet localConnections_;
+    typedef muduo::ThreadLocalSingleton<ConnectionSet> localConnections_;
     
+    std::mutex mutOfLoops_;
+    std::set<muduo::net::EventLoop*> loops_;
+
     muduo::net::TcpServer server_;
     LengthCodec codec_;
-    std::mutex mutexOfConnections_;
-    ConnectionSetPtr connections_;
-
-    ConnectionSetPtr getConnectionSet();
 };
 
 #endif
